@@ -1,0 +1,72 @@
+#include<iostream>
+
+using namespace std;
+
+const int N = 50010;
+
+int n, m, res;
+int p[N], d[N]; 
+
+int find(int x)
+{
+    if(p[x] != x)
+    {
+        int t = find(p[x]); //记录下x的根节点
+        d[x] += d[p[x]];    //从x到根节点的距离，是x到父节点的距离加上父节点到父节点的距离
+        p[x] = t;
+    }
+    return p[x];
+}
+
+int main()
+{
+    scanf("%d %d", &n, &m);
+    //初始化
+    for(int i = 1; i <= n; i ++)
+    {
+        p[i] = i;
+        d[i] = 0;
+    }
+
+    //m次说话
+    while(m --)
+    {
+        int D, x, y;
+        scanf("%d %d %d",&D, &x, &y);
+
+        if(x > n || y > n) res ++;
+        else
+        {
+            int px = find(x);
+            int py = find(y);
+            if(D == 1)
+            {
+                //第一种情况：xy在同一个并查集但是取模3不相等，那么xy是同类则是假话，res加一
+                if(px == py && (d[x] - d[y]) % 3) res ++;
+                //第二种情况：xy不在同一个并擦合计中，先合并集合，再给出判断条件
+                else if(px != py)
+                {
+                    p[px] = py;
+                    d[px] = d[y] - d[x];
+                }
+            }
+
+            else
+            {
+                //if(x == y) res ++;
+                //else 
+                //{
+                    if(px == py && (d[x] - d[y] - 1) % 3) res ++;
+                    else if(px != py)
+                    {
+                        p[px] = py;
+                        d[px] = d[y] + 1 - d[x];
+                    }
+                //}
+
+            }
+        }
+    }
+    printf("%d\n", res);
+    return 0;
+}
