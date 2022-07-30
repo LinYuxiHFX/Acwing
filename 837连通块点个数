@@ -1,0 +1,55 @@
+#include<iostream>
+
+using namespace std;
+
+const int N = 100010;
+
+int n, m;
+int p[N], s[N]; //s数组保存了i点所在集合的元素个数，因为i是在并查集中，所以只需要记录并查集顶点的编号就可以代表整个集合中元素的个数
+
+//返回祖先节点
+int find(int x)
+{
+    if(p[x] != x) p[x] = find(p[x]);
+    return p[x];
+}
+
+int main()
+{
+    scanf("%d%d", &n, &m);
+
+    for(int i = 1; i <= n; i ++)
+    {
+        p[i] = i;
+        s[i] = 1; //n个集合，每个集合只有自己本身这个元素
+    }
+
+    while(m --)
+    {
+        char op[5];
+        int a, b;
+        scanf("%s", op);
+
+        if(op[0] == 'C')
+        {
+            scanf("%d%d", &a, &b);
+            if(find(a) == find(b)) continue;
+            s[find(b)] += s[find(a)];
+            p[find(a)] = find(b);
+        }
+
+        else if(op[1] == '1')
+        {
+            scanf("%d%d", &a, &b);
+            if(find(a) == find(b)) puts("Yes");
+            else puts("No");
+        }
+
+        else 
+        {
+            scanf("%d", &a);
+            printf("%d\n", s[find(a)]);
+        }
+    }
+    return 0;
+}
